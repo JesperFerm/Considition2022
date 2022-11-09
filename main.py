@@ -18,16 +18,19 @@ def main():
     newOrderList = [0] * days
     solution = Solution(True, 1.75, 0, 2)
     solution.orders = newOrderList
+    # send a only 0 order list to get all negative data.
     submit_game_response = api.submit_game(api_key, map_name, solution)
     newOrderList = []
     dailys = submit_game_response.get('dailys')
     prevNeg = 0
+    # base orders on the negative points since that seems to be when they want to make a purchase
     for day in dailys:
         negativeScore = day.get('negativeCustomerScore') - prevNeg
         prevNeg = day.get('negativeCustomerScore')
         orderAmount = int(abs(negativeScore)/10)
         newOrderList.append(orderAmount)
     solution.orders = newOrderList
+    # send the new list with orders to get when people wants to return
     submit_game_response = api.submit_game(api_key, map_name, solution)
     dailys = submit_game_response.get('dailys')
     returnDays = [0] * days
